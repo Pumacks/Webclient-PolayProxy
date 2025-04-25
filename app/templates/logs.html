@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}WebPolarProxy{% endblock %}
+
+{% block content %}
+<h1>Live Logs</h1>
+<div style="height: 200px">
+  <pre id="logwindow" style="height: 400px; width: 600px; overflow-y: scroll; border: 1px solid #ccc; background-color: #000; color: #0f0; white-space: pre-wrap; font-family: monospace;"></pre></div>
+<script>
+  const logWindow = document.getElementById("logwindow");
+  const eventSource = new EventSource("/logs/stream");
+  
+  eventSource.onmessage = function(e) {
+    logWindow.textContent += e.data + "\n";
+    logWindow.scrollTop = logWindow.scrollHeight;  // Automatisch scrollen!
+  };
+</script>
+{% endblock %}
