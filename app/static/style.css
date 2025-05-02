@@ -36,6 +36,8 @@ ul.navbar li:last-child {
 
 .navbar li:hover {
 	background-color: #463c4d;
+	border-radius: 5px;
+	border-radius: 5px 5px 0px 0px;
 }
 
 .navbar a {
@@ -53,20 +55,19 @@ ul.navbar li:last-child {
 	position: absolute;
 	right: 0; /* statt left: 0 */
 	background-color: #3b3240;
-	min-width: 150px;
 	box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-	border-radius: 5px;
+	border-radius: 0px 0px 5px 5px;
 	top: 100%;
 	display: none;
-	min-width: 120px; /* oder wie gewünscht */
+	min-width: 100px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	text-align: left;
 }
 
-.dropdown:hover .dropdown-content {
-	//display: block;
+.dropdown.open{
+	background-color: #463c4d;
+	border-radius: 0px 0px 5px 5px;
 }
-
 .dropdown.open .dropdown-content {
 	display: block;
 }
@@ -93,6 +94,7 @@ ul.dropdown-content {
 	white-space: pre-wrap;
 	font-family: "Hurmit NerdFont";
 	font-weight: bold;
+	padding-right: 20px;
 }
 
 button {
