@@ -1,8 +1,24 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}WebPolarProxy{% endblock %} {% block
+content %}
 
-{% block title %}WebPolarProxy{% endblock %}
+<div>
+	<h2>Watch livetraffic</h2>
+	<button onclick="start_wireshark()">Start Wireshark</button>
+</div>
+<div>
+	<p id="wiresharklabel"></p>
+</div>
 
-{% block content %}
-  <h1>Live Data</h1>
-
+<script>
+function start_wireshark() {
+		fetch("/wireshark")
+			.then((response) => response.text())
+			.then((data) => {
+				document.getElementById("status").innerText = data;
+			})
+			.catch((err) => {
+				document.getElementById("status").innerText = "Fehler: " + err;
+			});
+	}
+</script>
 {% endblock %}

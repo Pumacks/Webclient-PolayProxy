@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block title %}WebPolarProxy{% endblock %} {% block
+content %}
+<h1>Options</h1>
+<div>
+	<h2>PolarProxy settings</h2>
+	<button onclick="start_proxy()">Start Polarproxy</button>
+	<button onclick="stop_proxy()">Stop Polarproxy</button>
+
+</div>
+<script>
+	function start_proxy() {
+		fetch("/start-proxy")
+			.then((response) => response.text())
+			.then((data) => {
+				document.getElementById("status").innerText = data;
+			})
+			.catch((err) => {
+				document.getElementById("status").innerText = "Fehler: " + err;
+			});
+	}
+
+	function stop_proxy() {
+		fetch("/stop-proxy")
+			.then((response) => response.text())
+			.then((data) => {
+				document.getElementById("status").innerText = data;
+			})
+			.catch((err) => {
+				document.getElementById("status").innerText = "Fehler: " + err;
+			});
+	}
+</script>
+{% endblock %}
