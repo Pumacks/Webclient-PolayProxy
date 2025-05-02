@@ -15,7 +15,7 @@
 				<li><a href="{{ url_for('logs') }}">Logs</a></li>
 				<li><a href="{{ url_for('options') }}">Options</a></li>
 				<li class="dropdown">
-					<a href="#">Export</a>
+					<a href="#" onclick="toggleDropdown(event)">Export</a>
 					<ul class="dropdown-content">
 						<li><a>Logs</a></li>
 						<li><a>Pcap</a></li>
@@ -28,3 +28,17 @@
 		<div class="content">{% block content %}{% endblock %}</div>
 	</body>
 </html>
+
+<script>
+	function toggleDropdown(event) {
+		event.preventDefault(); // verhindert das Springen des Links
+		const dropdown = event.target.closest(".dropdown");
+		dropdown.classList.toggle("open");
+	}
+	document.addEventListener("click", function (e) {
+		const openDropdown = document.querySelector(".dropdown.open");
+		if (openDropdown && !openDropdown.contains(e.target)) {
+			openDropdown.classList.remove("open");
+		}
+	});
+</script>
