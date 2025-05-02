@@ -24,8 +24,6 @@ ul.navbar {
 	list-style: none;
 }
 
-
-
 ul.navbar li:last-child {
 	margin-left: auto;
 	padding-right: 10px;
@@ -85,20 +83,19 @@ ul.dropdown-content {
 	background-color: #463c4d;
 }
 
-
 #logwindow {
 	height: 600px;
 	overflow-y: scroll;
 	border: 1px solid #ccc;
 	background-color: #000;
-	color: #e8d8f0;
+	color: #eae8eb;
 	border-color: #55495c;
 	white-space: pre-wrap;
 	font-family: "Hurmit NerdFont";
 	font-weight: bold;
 }
 
-button{
+button {
 	font-family: sans-serif;
 	font-weight: bold;
 	background-color: #38303d;
@@ -108,17 +105,16 @@ button{
 	padding: 5px;
 }
 
-button:hover{
+button:hover {
 	background-color: #463c4d;
 	border-color: #463c4d;
-
 }
 
 @media (max-width: 1024px) {
 	body {
 		font-size: 11pt;
 	}
-	button{
+	button {
 		font-size: 11pt;
 	}
 }
@@ -127,7 +123,7 @@ button:hover{
 	body {
 		font-size: 12pt;
 	}
-	button{
+	button {
 		font-size: 12pt;
 	}
 }
