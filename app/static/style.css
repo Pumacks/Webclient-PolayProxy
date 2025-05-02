@@ -24,6 +24,8 @@ ul.navbar {
 	list-style: none;
 }
 
+
+
 ul.navbar li:last-child {
 	margin-left: auto;
 	padding-right: 10px;
@@ -32,6 +34,10 @@ ul.navbar li:last-child {
 .navbar li {
 	display: inline-block;
 	position: relative;
+}
+
+.navbar li:hover {
+	background-color: #463c4d;
 }
 
 .navbar a {
