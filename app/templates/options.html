@@ -5,8 +5,18 @@ content %}
 	<h2>PolarProxy settings</h2>
 	<button onclick="start_proxy()">Start Polarproxy</button>
 	<button onclick="stop_proxy()">Stop Polarproxy</button>
+</div>
+<div>
+	<h2>Docker Settings</h2>
+	<h3>Name / Container ID:</h3>
+	<form id="dockerForm">
+  		<textarea name="container_id" rows="1" cols="40">{{ container_id }}</textarea>
+   		<button type="submit">save</button>
+	</form>
+
 
 </div>
+
 <script>
 	function start_proxy() {
 		fetch("/start-proxy")
@@ -29,5 +39,26 @@ content %}
 				document.getElementById("status").innerText = "Fehler: " + err;
 			});
 	}
+
+	document.getElementById("dockerForm").addEventListener("submit", function(e) {
+  	e.preventDefault(); // Verhindert Redirect
+
+	  const formData = new FormData(this);
+	  const id = formData.get("container_id");
+
+	  fetch("/dockerCredentials", {
+	    method: "POST",
+	    headers: { "Content-Type": "text/plain" },
+	    body: id
+	  })
+	  .then(res => res.text())
+	  .then(data => {
+	    console.log("Antwort:", data);
+	  })
+	  .catch(err => {
+	    console.error("Fehler:", err);
+	  });
+	});
+
 </script>
 {% endblock %}
