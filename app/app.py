@@ -6,6 +6,7 @@ from flask import Flask, render_template, Response, request
 app = Flask(__name__)
 
 container_id = ""
+docker_mode = "failed to load settings"
 
 def stream_logs():
     process = subprocess.Popen(
@@ -38,20 +39,28 @@ def stop_polarproxy():
     subprocess.run(cmd, shell=True,capture_output=True,
             text=True)
 
-def load_credentials():
+def load_settings():
 	global container_id
+	global docker_mode
 	try:
-		with open('app/static/credentials.json', 'r') as f:
+		with open('app/static/settings.json', 'r') as f:
 			json_data = json.load(f)
 			container_id = json_data.get("container_id", "")
+			docker_mode = json_data.get("docker_mode", "")
 	except (FileNotFoundError, json.JSONDecodeError):
 		container_id = ""
+		docker_mode = ""
 
 def write_into_json(name, data):
-	json_data = {
-		f"{name}": f"{data}"
-	}
-	with open('app/static/credentials.json', 'w') as f:
+	try:
+		with open('app/static/settings.json') as f:
+			json_data = json.load(f)
+	except:
+		json_data = {}
+
+	json_data[name] = data
+
+	with open('app/static/settings.json', 'w') as f:
 		json.dump(json_data, f, ensure_ascii=False, indent=4)
 
 @app.route("/")
@@ -68,7 +77,7 @@ def logs():
 
 @app.route("/options")
 def options():
-        return render_template("options.html", container_id = container_id)
+        return render_template("options.html", container_id = container_id, docker_mode = docker_mode)
 
 @app.route("/wireshark")
 def start_wireshark():
@@ -89,11 +98,19 @@ def stop_proxy():
 def setup_docker():
     global container_id
     container_id = request.data.decode("utf-8")
-    write_into_json("container_id",container_id)
+    write_into_json("container_id", container_id)
     return "OK"
 
-load_credentials()
+
+@app.route("/set_mode", methods=["POST"])
+def switch_mode():
+    mode = request.data.decode("utf-8")
+    is_docker = mode == "docker"
+    write_into_json("docker_mode", is_docker)
+    threading.Thread(target=stop_polarproxy, daemon=True).start()
+    return "Switched Mode"
+
+load_settings()
 
 if __name__ == "__main__":
-    load_credentials()
     app.run(debug=True, threaded=True)

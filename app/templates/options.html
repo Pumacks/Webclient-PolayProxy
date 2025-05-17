@@ -2,22 +2,56 @@
 content %}
 <h1>Options</h1>
 <div>
+	<form action="/set_mode" method="post">
+		<h2>Mode</h2>
+		<label>
+			<input
+				type="radio"
+				name="mode"
+				value="docker"
+				onclick="switchMode(this.value)"
+			/>
+			Docker
+		</label>
+		<br />
+		<label>
+			<input
+				type="radio"
+				name="mode"
+				value="local"
+				onclick="switchMode(this.value)"
+			/>
+			Local
+		</label>
+	</form>
+</div>
+<div id="docker_settings">
+	<h2>Docker Settings</h2>
+	<h3>Name / Container ID:</h3>
+	<form id="docker_form">
+		<textarea id="containertextarea" name="container_id" rows="1" cols="40">
+{{ container_id }}</textarea
+		>
+		<button type="submit">save</button>
+	</form>
+</div>
+
+<div id="proxy_settings">
 	<h2>PolarProxy settings</h2>
 	<button onclick="start_proxy()">Start Polarproxy</button>
 	<button onclick="stop_proxy()">Stop Polarproxy</button>
 </div>
-<div>
-	<h2>Docker Settings</h2>
-	<h3>Name / Container ID:</h3>
-	<form id="dockerForm">
-  		<textarea name="container_id" rows="1" cols="40">{{ container_id }}</textarea>
-   		<button type="submit">save</button>
-	</form>
-
-
-</div>
 
 <script>
+	docker_mode = {{ docker_mode | tojson }};
+
+	function switch_modes() {
+		if (!docker_mode) {
+			document.getElementById("docker_settings").style.display = "none";
+		} else
+			document.getElementById("docker_settings").style.display = "block";
+	}
+
 	function start_proxy() {
 		fetch("/start-proxy")
 			.then((response) => response.text())
@@ -40,25 +74,52 @@ content %}
 			});
 	}
 
-	document.getElementById("dockerForm").addEventListener("submit", function(e) {
-  	e.preventDefault(); // Verhindert Redirect
+	function switchMode(selectedMode) {
+		if (selectedMode == "docker") {
+			docker_mode = true;
+			document.getElementById("docker_settings").style.display = "block";
+		} else {
+			docker_mode = false;
+			document.getElementById("docker_settings").style.display = "none";
+		}
+		fetch("/set_mode", {
+			method: "POST",
+			headers: { "Content-Type": "text/plain" },
+			body: selectedMode,
+		})
+			.then((res) => res.text())
+			.then((data) => console.log("Antwort:", data))
+			.catch((err) => console.error("Fehler:", err));
+	}
 
-	  const formData = new FormData(this);
-	  const id = formData.get("container_id");
+	document
+		.getElementById("docker_form")
+		.addEventListener("submit", function (e) {
+			e.preventDefault(); // Verhindert Redirect
 
-	  fetch("/dockerCredentials", {
-	    method: "POST",
-	    headers: { "Content-Type": "text/plain" },
-	    body: id
-	  })
-	  .then(res => res.text())
-	  .then(data => {
-	    console.log("Antwort:", data);
-	  })
-	  .catch(err => {
-	    console.error("Fehler:", err);
-	  });
-	});
+			const formData = new FormData(this);
+			const id = formData.get("container_id");
 
+			fetch("/dockerCredentials", {
+				method: "POST",
+				headers: { "Content-Type": "text/plain" },
+				body: id,
+			})
+				.then((res) => res.text())
+				.then((data) => {
+					console.log("Antwort:", data);
+				})
+				.catch((err) => {
+					console.error("Fehler:", err);
+				});
+		});
+	switch_modes();
+	console.log(docker_mode);
+	if(docker_mode){
+		document.querySelector('input[name="mode"][value="docker"]').checked = true;
+	}
+	else{
+		document.querySelector('input[name="mode"][value="local"]').checked = true;
+	}
 </script>
 {% endblock %}
