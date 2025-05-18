@@ -43,83 +43,89 @@ content %}
 </div>
 
 <script>
-	docker_mode = {{ docker_mode | tojson }};
+		docker_mode = {{ docker_mode | tojson }};
 
-	function switch_modes() {
-		if (!docker_mode) {
-			document.getElementById("docker_settings").style.display = "none";
-		} else
-			document.getElementById("docker_settings").style.display = "block";
-	}
+		window.addEventListener("DOMContentLoaded", () => {
+	  fetch("/static/settings.json", { cache: "no-store" })
+	    .then((response) => response.json())
+	    .then((data) => {
+	      console.log("Docker mode:", data.docker_mode);
+					  docker_mode = data.docker_mode;
+	      switch_modes()
+	    })
+	    .catch((err) => console.error("Fehler beim Laden der settings.json:", err));
+	});
 
-	function start_proxy() {
-		fetch("/start-proxy")
-			.then((response) => response.text())
-			.then((data) => {
-				document.getElementById("status").innerText = data;
-			})
-			.catch((err) => {
-				document.getElementById("status").innerText = "Fehler: " + err;
-			});
-	}
+		function switch_modes() {
+			if (!docker_mode) {
+				document.querySelector('input[name="mode"][value="local"]').checked = true;
+				document.getElementById("docker_settings").style.display = "none";
+			} else{
+				document.getElementById("docker_settings").style.display = "block";
+				document.querySelector('input[name="mode"][value="docker"]').checked = true;
+			}
+			}
 
-	function stop_proxy() {
-		fetch("/stop-proxy")
-			.then((response) => response.text())
-			.then((data) => {
-				document.getElementById("status").innerText = data;
-			})
-			.catch((err) => {
-				document.getElementById("status").innerText = "Fehler: " + err;
-			});
-	}
-
-	function switchMode(selectedMode) {
-		if (selectedMode == "docker") {
-			docker_mode = true;
-			document.getElementById("docker_settings").style.display = "block";
-		} else {
-			docker_mode = false;
-			document.getElementById("docker_settings").style.display = "none";
-		}
-		fetch("/set_mode", {
-			method: "POST",
-			headers: { "Content-Type": "text/plain" },
-			body: selectedMode,
-		})
-			.then((res) => res.text())
-			.then((data) => console.log("Antwort:", data))
-			.catch((err) => console.error("Fehler:", err));
-	}
-
-	document
-		.getElementById("docker_form")
-		.addEventListener("submit", function (e) {
-			e.preventDefault(); // Verhindert Redirect
-
-			const formData = new FormData(this);
-			const id = formData.get("container_id");
-
-			fetch("/dockerCredentials", {
-				method: "POST",
-				headers: { "Content-Type": "text/plain" },
-				body: id,
-			})
-				.then((res) => res.text())
+		function start_proxy() {
+			fetch("/start-proxy")
+				.then((response) => response.text())
 				.then((data) => {
-					console.log("Antwort:", data);
+					document.getElementById("status").innerText = data;
 				})
 				.catch((err) => {
-					console.error("Fehler:", err);
+					document.getElementById("status").innerText = "Fehler: " + err;
 				});
-		});
-	switch_modes();
-	console.log(docker_mode);
-	if(docker_mode){
-		document.querySelector('input[name="mode"][value="docker"]').checked = true;
-	}
-	else{
-		document.querySelector('input[name="mode"][value="local"]').checked = true;
-	}
+		}
+
+		function stop_proxy() {
+			fetch("/stop-proxy")
+				.then((response) => response.text())
+				.then((data) => {
+					document.getElementById("status").innerText = data;
+				})
+				.catch((err) => {
+					document.getElementById("status").innerText = "Fehler: " + err;
+				});
+		}
+
+		function switchMode(selectedMode) {
+			if (selectedMode == "docker") {
+				docker_mode = true;
+				document.getElementById("docker_settings").style.display = "block";
+			} else {
+				docker_mode = false;
+				document.getElementById("docker_settings").style.display = "none";
+			}
+			fetch("/set_mode", {
+				method: "POST",
+				headers: { "Content-Type": "text/plain" },
+				body: selectedMode,
+			})
+				.then((res) => res.text())
+				.then((data) => console.log("Antwort:", data))
+				.catch((err) => console.error("Fehler:", err));
+		}
+
+		document
+			.getElementById("docker_form")
+			.addEventListener("submit", function (e) {
+				e.preventDefault(); // Verhindert Redirect
+
+				const formData = new FormData(this);
+				const id = formData.get("container_id");
+
+				fetch("/dockerCredentials", {
+					method: "POST",
+					headers: { "Content-Type": "text/plain" },
+					body: id,
+				})
+					.then((res) => res.text())
+					.then((data) => {
+						console.log("Antwort:", data);
+					})
+					.catch((err) => {
+						console.error("Fehler:", err);
+					});
+			});
 </script>
 {% endblock %}
