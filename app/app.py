@@ -6,18 +6,25 @@ from flask import Flask, render_template, Response, request
 app = Flask(__name__)
 
 container_id = ""
-docker_mode = "failed to load settings"
+docker_mode = ""
 
 def stream_logs():
-    process = subprocess.Popen(
-        ["docker", "logs", "-f", container_id],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True
-    )
-    if process.stdout is not None:
-        for line in process.stdout:
-            yield f"data: {line}\n\n"
+	if docker_mode:
+		process = subprocess.Popen(
+	        ["docker", "logs", "-f", container_id],
+	        stdout=subprocess.PIPE,
+	        stderr=subprocess.STDOUT,
+	        text=True)
+		if process.stdout is not None:
+			for line in process.stdout:
+				yield f"data: {line}\n\n"
+	else:
+		process = subprocess.Popen(["journalctl", "-t", "PolarProxy"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+		if process.stdout is not None:
+			for line in process.stdout:
+				yield f"data: {line}\n\n"
+
+
 
 def run_polarproxy_with_wireshark():
     cmd = (
@@ -26,18 +33,20 @@ def run_polarproxy_with_wireshark():
     subprocess.run(cmd, shell=True)
 
 def start_polarproxy():
-    cmd = (
-        f"docker start {container_id}"
-    )
-    subprocess.run(cmd, shell=True,capture_output=True,
-            text=True)
+	if docker_mode:
+		cmd = (f"docker start {container_id}")
+		subprocess.run(cmd, shell=True,capture_output=True,text=True)
+	else:
+		cmd = ("systemctl start PolarProxy.service")
+		subprocess.run(cmd, shell=True,capture_output=True,text=True)
 
 def stop_polarproxy():
-    cmd = (
-        f"docker stop {container_id}"
-    )
-    subprocess.run(cmd, shell=True,capture_output=True,
-            text=True)
+	if docker_mode:
+		cmd = (f"docker stop {container_id}")
+		subprocess.run(cmd, shell=True,capture_output=True,text=True)
+	else:
+		cmd = ("systemctl stop PolarProxy.service")
+		subprocess.run(cmd, shell=True,capture_output=True,text=True)
 
 def load_settings():
 	global container_id
@@ -104,11 +113,13 @@ def setup_docker():
 
 @app.route("/set_mode", methods=["POST"])
 def switch_mode():
-    mode = request.data.decode("utf-8")
-    is_docker = mode == "docker"
-    write_into_json("docker_mode", is_docker)
-    threading.Thread(target=stop_polarproxy, daemon=True).start()
-    return "Switched Mode"
+	global docker_mode
+	mode = request.data.decode("utf-8")
+	is_docker = mode == "docker"
+	write_into_json("docker_mode", is_docker)
+	docker_mode = is_docker
+	threading.Thread(target=stop_polarproxy, daemon=True).start()
+	return "Switched Mode"
 
 load_settings()
 
