@@ -12,12 +12,10 @@
 		<nav>
 			<ul class="navbar">
 				<li><a href="{{ url_for('home') }}">Home</a></li>
-				<li><a href="{{ url_for('logs') }}">Logs</a></li>
 				<li><a href="{{ url_for('options') }}">Options</a></li>
 				<li class="dropdown">
 					<a href="#" onclick="toggleDropdown(event)">Export</a>
 					<ul class="dropdown-content">
-						<li><a>Logs</a></li>
 						<li><a>Pcap</a></li>
 					</ul>
 				</li>

@@ -1,4 +1,5 @@
 {
     "docker_mode": true,
-    "container_id": "polarproxy-pcap"
+    "container_id": "polarproxy-pcap",
+    "pcap_directory": "var/log/PolarProxy"
 }

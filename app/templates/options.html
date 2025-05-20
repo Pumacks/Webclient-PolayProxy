@@ -29,9 +29,15 @@ content %}
 	<h2>Docker Settings</h2>
 	<h3>Name / Container ID:</h3>
 	<form id="docker_form">
-		<textarea id="containertextarea" name="container_id" rows="1" cols="40">
-{{ container_id }}</textarea
-		>
+		<textarea class="textarea" name="container_id" rows="1" cols="30">{{ container_id }}</textarea>
+		<button type="submit">save</button>
+	</form>
+</div>
+<div>
+	<h2>Start options</h2>
+	<h3>Directory where pcap-files are stored:</h3>
+	<form id="pcap_dir_form">
+		<textarea class="textarea" name="pcap_directory" rows="1" cols="30" placeholder="default: var/log/PolarProxy">{{ pcap_directory }}</textarea>
 		<button type="submit">save</button>
 	</form>
 </div>
@@ -115,6 +121,27 @@ content %}
 				const id = formData.get("container_id");
 
 				fetch("/dockerCredentials", {
+					method: "POST",
+					headers: { "Content-Type": "text/plain" },
+					body: id,
+				})
+					.then((res) => res.text())
+					.then((data) => {
+						console.log("Antwort:", data);
+					})
+					.catch((err) => {
+						console.error("Fehler:", err);
+					});
+			});
+		document
+			.getElementById("pcap_dir_form")
+			.addEventListener("submit", function (e) {
+				e.preventDefault(); // Verhindert Redirect
+
+				const formData = new FormData(this);
+				const id = formData.get("pcap_directory");
+
+				fetch("/setPcapDirectory", {
 					method: "POST",
 					headers: { "Content-Type": "text/plain" },
 					body: id,

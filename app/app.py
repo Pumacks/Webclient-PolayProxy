@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 container_id = ""
 docker_mode = ""
+pcap_directory = ""
 
 def stream_logs():
 	if docker_mode:
@@ -51,14 +52,17 @@ def stop_polarproxy():
 def load_settings():
 	global container_id
 	global docker_mode
+	global pcap_directory
 	try:
 		with open('app/static/settings.json', 'r') as f:
 			json_data = json.load(f)
 			container_id = json_data.get("container_id", "")
 			docker_mode = json_data.get("docker_mode", "")
+			pcap_directory = json_data.get("pcap_directory", "")
 	except (FileNotFoundError, json.JSONDecodeError):
 		container_id = ""
 		docker_mode = ""
+		pcap_directory = "var/log/PolarProxy"
 
 def write_into_json(name, data):
 	try:
@@ -80,13 +84,9 @@ def home():
 def log_stream():
     return Response(stream_logs(), mimetype="text/event-stream")
 
-@app.route("/logs")
-def logs():
-        return render_template("logs.html")
-
 @app.route("/options")
 def options():
-        return render_template("options.html", container_id = container_id, docker_mode = docker_mode)
+        return render_template("options.html", container_id = container_id, docker_mode = docker_mode, pcap_directory = pcap_directory)
 
 @app.route("/wireshark")
 def start_wireshark():
@@ -110,15 +110,19 @@ def setup_docker():
     write_into_json("container_id", container_id)
     return "OK"
 
+@app.route("/setPcapDirectory", methods=["POST"])
+def setup_pcapoverip():
+    global pcap_directory
+    pcap_directory = request.data.decode("utf-8")
+    write_into_json("pcap_directory", pcap_directory)
+    return "OK"
 
 @app.route("/set_mode", methods=["POST"])
 def switch_mode():
 	global docker_mode
 	mode = request.data.decode("utf-8")
-	is_docker = mode == "docker"
-	write_into_json("docker_mode", is_docker)
-	docker_mode = is_docker
-	threading.Thread(target=stop_polarproxy, daemon=True).start()
+	docker_mode = mode == "docker"
+	write_into_json("docker_mode", docker_mode)
 	return "Switched Mode"
 
 load_settings()
