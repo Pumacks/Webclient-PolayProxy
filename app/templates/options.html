@@ -2,157 +2,151 @@
 content %}
 <h1>Options</h1>
 <div>
-	<form action="/set_mode" method="post">
-		<h2>Mode</h2>
-		<label>
-			<input
-				type="radio"
-				name="mode"
-				value="docker"
-				onclick="switchMode(this.value)"
-			/>
-			Docker
-		</label>
-		<br />
-		<label>
-			<input
-				type="radio"
-				name="mode"
-				value="local"
-				onclick="switchMode(this.value)"
-			/>
-			Local
-		</label>
-	</form>
+    <form action="/set_mode" method="post">
+        <h2>Mode</h2>
+        <label>
+            <input
+                type="radio"
+                name="mode"
+                value="docker"
+                onclick="switchMode(this.value)"
+            />
+            Docker
+        </label>
+        <br />
+        <label>
+            <input
+                type="radio"
+                name="mode"
+                value="local"
+                onclick="switchMode(this.value)"
+            />
+            Local
+        </label>
+    </form>
 </div>
 <div id="docker_settings">
-	<h2>Docker Settings</h2>
-	<h3>Name / Container ID:</h3>
-	<form id="docker_form">
-		<textarea class="textarea" name="container_id" rows="1" cols="30">{{ container_id }}</textarea>
-		<button type="submit">save</button>
-	</form>
-</div>
-<div>
-	<h2>Start options</h2>
-	<h3>Directory where pcap-files are stored:</h3>
-	<form id="pcap_dir_form">
-		<textarea class="textarea" name="pcap_directory" rows="1" cols="30" placeholder="default: var/log/PolarProxy">{{ pcap_directory }}</textarea>
-		<button type="submit">save</button>
-	</form>
+    <h2>Docker Settings</h2>
+    <h3>Name / Container ID:</h3>
+    <form id="docker_form">
+        <textarea class="textarea" name="container_id" rows="1" cols="30">
+{{ container_id }}</textarea
+        >
+        <button type="submit">save</button>
+    </form>
 </div>
 
 <div id="proxy_settings">
-	<h2>PolarProxy settings</h2>
-	<button onclick="start_proxy()">Start Polarproxy</button>
-	<button onclick="stop_proxy()">Stop Polarproxy</button>
+    <h2>PolarProxy settings</h2>
+    <button onclick="start_proxy()">Start Polarproxy</button>
+    <button onclick="stop_proxy()">Stop Polarproxy</button>
 </div>
 
 <script>
-		docker_mode = {{ docker_mode | tojson }};
+    	docker_mode = {{ docker_mode | tojson }};
 
-		window.addEventListener("DOMContentLoaded", () => {
-	  fetch("/static/settings.json", { cache: "no-store" })
-	    .then((response) => response.json())
-	    .then((data) => {
-	      console.log("Docker mode:", data.docker_mode);
-					  docker_mode = data.docker_mode;
-	      switch_modes()
-	    })
-	    .catch((err) => console.error("Fehler beim Laden der settings.json:", err));
-	});
+    	window.addEventListener("DOMContentLoaded", () => {
+      fetch("/static/settings.json", { cache: "no-store" })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Docker mode:", data.docker_mode);
+    				  docker_mode = data.docker_mode;
+          switch_modes()
+        })
+        .catch((err) => console.error("Fehler beim Laden der settings.json:", err));
+    });
 
-		function switch_modes() {
-			if (!docker_mode) {
-				document.querySelector('input[name="mode"][value="local"]').checked = true;
-				document.getElementById("docker_settings").style.display = "none";
-			} else{
-				document.getElementById("docker_settings").style.display = "block";
-				document.querySelector('input[name="mode"][value="docker"]').checked = true;
-			}
-			}
+    	function switch_modes() {
+    		if (!docker_mode) {
+    			document.querySelector('input[name="mode"][value="local"]').checked = true;
+    			document.getElementById("docker_settings").style.display = "none";
+    		} else{
+    			document.getElementById("docker_settings").style.display = "block";
+    			document.querySelector('input[name="mode"][value="docker"]').checked = true;
+    		}
+    		}
 
-		function start_proxy() {
-			fetch("/start-proxy")
-				.then((response) => response.text())
-				.then((data) => {
-					document.getElementById("status").innerText = data;
-				})
-				.catch((err) => {
-					document.getElementById("status").innerText = "Fehler: " + err;
-				});
-		}
+    	function start_proxy() {
+    		fetch("/start-proxy")
+    			.then((response) => response.text())
+    			.then((data) => {
+    				document.getElementById("status").innerText = data;
+    			})
+    			.catch((err) => {
+    				document.getElementById("status").innerText = "Fehler: " + err;
+    			});
+    	}
 
-		function stop_proxy() {
-			fetch("/stop-proxy")
-				.then((response) => response.text())
-				.then((data) => {
-					document.getElementById("status").innerText = data;
-				})
-				.catch((err) => {
-					document.getElementById("status").innerText = "Fehler: " + err;
-				});
-		}
+    	function stop_proxy() {
+    		fetch("/stop-proxy")
+    			.then((response) => response.text())
+    			.then((data) => {
+    				document.getElementById("status").innerText = data;
+    			})
+    			.catch((err) => {
+    				document.getElementById("status").innerText = "Fehler: " + err;
+    			});
+    	}
 
-		function switchMode(selectedMode) {
-			if (selectedMode == "docker") {
-				docker_mode = true;
-				document.getElementById("docker_settings").style.display = "block";
-			} else {
-				docker_mode = false;
-				document.getElementById("docker_settings").style.display = "none";
-			}
-			fetch("/set_mode", {
-				method: "POST",
-				headers: { "Content-Type": "text/plain" },
-				body: selectedMode,
-			})
-				.then((res) => res.text())
-				.then((data) => console.log("Antwort:", data))
-				.catch((err) => console.error("Fehler:", err));
-		}
+    	function switchMode(selectedMode) {
+    		if (selectedMode == "docker") {
+    			docker_mode = true;
+    			document.getElementById("docker_settings").style.display = "block";
+    		} else {
+    			docker_mode = false;
+    			document.getElementById("docker_settings").style.display = "none";
+    		}
+    		fetch("/set_mode", {
+    			method: "POST",
+    			headers: { "Content-Type": "text/plain" },
+    			body: selectedMode,
+    		})
+    			.then((res) => res.text())
+    			.then((data) => console.log("Antwort:", data))
+    			.catch((err) => console.error("Fehler:", err));
+    	}
 
-		document
-			.getElementById("docker_form")
-			.addEventListener("submit", function (e) {
-				e.preventDefault(); // Verhindert Redirect
+    	document
+    		.getElementById("docker_form")
+    		.addEventListener("submit", function (e) {
+    			e.preventDefault(); // Verhindert Redirect
 
-				const formData = new FormData(this);
-				const id = formData.get("container_id");
+    			const formData = new FormData(this);
+    			const id = formData.get("container_id");
 
-				fetch("/dockerCredentials", {
-					method: "POST",
-					headers: { "Content-Type": "text/plain" },
-					body: id,
-				})
-					.then((res) => res.text())
-					.then((data) => {
-						console.log("Antwort:", data);
-					})
-					.catch((err) => {
-						console.error("Fehler:", err);
-					});
-			});
-		document
-			.getElementById("pcap_dir_form")
-			.addEventListener("submit", function (e) {
-				e.preventDefault(); // Verhindert Redirect
+    			fetch("/dockerCredentials", {
+    				method: "POST",
+    				headers: { "Content-Type": "text/plain" },
+    				body: id,
+    			})
+    				.then((res) => res.text())
+    				.then((data) => {
+    					console.log("Antwort:", data);
+    				})
+    				.catch((err) => {
+    					console.error("Fehler:", err);
+    				});
+    		});
+    	document
+    		.getElementById("pcap_dir_form")
+    		.addEventListener("submit", function (e) {
+    			e.preventDefault(); // Verhindert Redirect
 
-				const formData = new FormData(this);
-				const id = formData.get("pcap_directory");
+    			const formData = new FormData(this);
+    			const id = formData.get("pcap_directory");
 
-				fetch("/setPcapDirectory", {
-					method: "POST",
-					headers: { "Content-Type": "text/plain" },
-					body: id,
-				})
-					.then((res) => res.text())
-					.then((data) => {
-						console.log("Antwort:", data);
-					})
-					.catch((err) => {
-						console.error("Fehler:", err);
-					});
-			});
+    			fetch("/setPcapDirectory", {
+    				method: "POST",
+    				headers: { "Content-Type": "text/plain" },
+    				body: id,
+    			})
+    				.then((res) => res.text())
+    				.then((data) => {
+    					console.log("Antwort:", data);
+    				})
+    				.catch((err) => {
+    					console.error("Fehler:", err);
+    				});
+    		});
 </script>
 {% endblock %}

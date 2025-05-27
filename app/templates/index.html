@@ -1,39 +1,39 @@
 {% extends "base.html" %} {% block title %}WebPolarProxy{% endblock %} {% block
 content %}
 <div>
-	<h2>Logs</h2>
-	<pre id="logwindow"></pre>
+    <h2>Logs</h2>
+    <pre id="logwindow"></pre>
 </div>
 
 <div>
-	<h2>Watch livetraffic</h2>
-	<button onclick="start_wireshark()">Start Wireshark</button>
+    <h2>Watch livetraffic</h2>
+    <button onclick="start_wireshark()">Start Wireshark</button>
 </div>
 <div>
-	<p id="wiresharklabel"></p>
+    <p id="wiresharklabel"></p>
 </div>
 
 <script>
-	function start_wireshark() {
-		fetch("/wireshark")
-			.then((response) => response.text())
-			.then((data) => {
-				document.getElementById("status").innerText = data;
-			})
-			.catch((err) => {
-				document.getElementById("status").innerText = "Fehler: " + err;
-			});
-	}
+    function start_wireshark() {
+        fetch("/wireshark")
+            .then((response) => response.text())
+            .then((data) => {
+                document.getElementById("status").innerText = data;
+            })
+            .catch((err) => {
+                document.getElementById("status").innerText = "Fehler: " + err;
+            });
+    }
 
-	const logWindow = document.getElementById("logwindow");
-	const eventSource = new EventSource("/logs/stream");
+    const logWindow = document.getElementById("logwindow");
+    const eventSource = new EventSource("/logs/stream");
 
-	eventSource.onmessage = function (e) {
-		logWindow.textContent += e.data + "\n";
-		logWindow.scrollTop = logWindow.scrollHeight;
-	};
+    eventSource.onmessage = function (e) {
+        logWindow.textContent += e.data + "\n";
+        logWindow.scrollTop = logWindow.scrollHeight;
+    };
 
-	const width = window.innerWidth;
-	document.getElementById("logwindow").style.width = width - 60 + "px";
+    const width = window.innerWidth;
+    document.getElementById("logwindow").style.width = width - 60 + "px";
 </script>
 {% endblock %}
