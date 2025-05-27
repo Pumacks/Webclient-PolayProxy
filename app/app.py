@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 container_id = ""
 docker_mode = ""
-pcap_directory = ""
+pcap_over_ip = "127.0.0.1"
 
 def stream_logs():
 	if docker_mode:
@@ -29,7 +29,7 @@ def stream_logs():
 
 def run_polarproxy_with_wireshark():
     cmd = (
-        "wireshark -k -i TCP@127.0.0.1:57012"
+        f"wireshark -k -i TCP@{pcap_over_ip}:57012"
     )
     subprocess.run(cmd, shell=True)
 
@@ -110,11 +110,11 @@ def setup_docker():
     write_into_json("container_id", container_id)
     return "OK"
 
-@app.route("/setPcapDirectory", methods=["POST"])
+@app.route("/setPcapIP", methods=["POST"])
 def setup_pcapoverip():
-    global pcap_directory
-    pcap_directory = request.data.decode("utf-8")
-    write_into_json("pcap_directory", pcap_directory)
+    global pcap_over_ip
+    pcap_over_ip = request.data.decode("utf-8")
+    write_into_json("pcap_over_ip", pcap_over_ip)
     return "OK"
 
 @app.route("/set_mode", methods=["POST"])

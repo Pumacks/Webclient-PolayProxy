@@ -24,10 +24,6 @@ ul.navbar {
 	list-style: none;
 }
 
-ul.navbar li:last-child {
-	margin-left: auto;
-	padding-right: 10px;
-}
 
 .navbar li {
 	display: inline-block;
