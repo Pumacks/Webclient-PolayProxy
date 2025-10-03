@@ -7,3 +7,9 @@ dist/
 htmlcov/
 .tox/
 docs/_build/
+*.pyc
+instance/
+.pytest_cache/
+.coverage
+build/
+*.egg-info/
