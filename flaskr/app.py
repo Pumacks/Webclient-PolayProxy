@@ -25,8 +25,6 @@ def stream_logs():
 			for line in process.stdout:
 				yield f"data: {line}\n\n"
 
-
-
 def run_polarproxy_with_wireshark():
     cmd = (
         f"wireshark -k -i TCP@{pcap_over_ip}:57012"
@@ -86,7 +84,7 @@ def log_stream():
 
 @app.route("/options")
 def options():
-        return render_template("options.html", container_id = container_id, docker_mode = docker_mode, pcap_directory = pcap_directory)
+    return render_template("options.html", container_id = container_id, docker_mode = docker_mode, pcap_directory = pcap_directory)
 
 @app.route("/wireshark")
 def start_wireshark():
