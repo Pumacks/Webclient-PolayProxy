@@ -1,22 +1,22 @@
 <!doctype html>
 <html>
-	<head>
-		<link
-			rel="stylesheet"
-			href="{{ url_for('static', filename='style.css') }}"
-		/>
-		<title>{% block title %}Meine Seite{% endblock %}</title>
-	</head>
-	<body>
-		<!-- Navbar -->
-		<nav>
-			<ul class="navbar">
-				<li><a href="{{ url_for('home') }}">Home</a></li>
-				<li><a href="{{ url_for('options') }}">Options</a></li>
-			</ul>
-		</nav>
 
-		<!-- Seiteninhalt -->
-		<div class="content">{% block content %}{% endblock %}</div>
-	</body>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+	<title>{% block title %}Polarview{% endblock %}</title>
+</head>
+
+<body>
+	<!-- Navbar -->
+	<nav>
+		<ul class="navbar">
+			<li><a href="{{ url_for('home') }}">Home</a></li>
+			<li><a href="{{ url_for('options') }}">Options</a></li>
+		</ul>
+	</nav>
+
+	<!-- Seiteninhalt -->
+	<div class="content">{% block content %}{% endblock %}</div>
+</body>
+
 </html>
