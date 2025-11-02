@@ -1,5 +1,5 @@
 {
     "docker_mode": true,
-    "container_id": "polarproxy-pcap",
+    "container_id": "",
     "pcap_over_ip": "127.0.0.1"
 }
