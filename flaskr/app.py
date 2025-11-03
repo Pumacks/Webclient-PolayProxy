@@ -52,7 +52,7 @@ def load_settings():
 	global docker_mode
 	global pcap_directory
 	try:
-		with open('flaskr/static/settings.json', 'r') as f:
+		with open('static/settings.json', 'r') as f:
 			json_data = json.load(f)
 			container_id = json_data.get("container_id", "")
 			docker_mode = json_data.get("docker_mode", "")
@@ -64,14 +64,14 @@ def load_settings():
 
 def write_into_json(name, data):
 	try:
-		with open('flaskr/static/settings.json') as f:
+		with open('static/settings.json') as f:
 			json_data = json.load(f)
 	except:
 		json_data = {}
 
 	json_data[name] = data
 
-	with open('flaskr/static/settings.json', 'w') as f:
+	with open('static/settings.json', 'w') as f:
 		json.dump(json_data, f, ensure_ascii=False, indent=4)
 
 @app.route("/")
