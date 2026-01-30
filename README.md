@@ -98,30 +98,34 @@ The following functions are included in this project right now:
 ### Installation
 
 1. Create a folder
-   ```sh
-   mkdir polarview
-   cd polarview
-   ```
-1. Clone this repo
-   ```sh
-   git clone https://github.com/Pumacks/Webclient-PolayProxy.git
-   ```
-2. Create a virtual environment
-   ```sh
-   python -m venv .venv
-   ```
-2. Activate the virtual environment
-   ```
-   source .venv/bin/activate
-   ```
-2. Install pip 
-   ```sh
-   python -m ensurepip --upgrade
-   ```
-3. Install Flask
+    ```sh
+    mkdir polarview
+    cd polarview
+    ```
+2. Clone this repo
+    ```sh
+    git clone https://github.com/Pumacks/Webclient-PolayProxy.git
+    ```
+3. Create a virtual environment
+    ```sh
+    python -m venv .venv
+    ```
+4. Activate the virtual environment
+    ```
+    source .venv/bin/activate
+    ```
+5. Install pip 
+    ```sh
+    python -m ensurepip --upgrade
+    ```
+6. Install Flask
    ```sh
    pip install flask
    ```
+7. Run application on localhost
+    ```
+    flask --app app.py run
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
